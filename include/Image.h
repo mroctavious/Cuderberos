@@ -12,11 +12,17 @@ template <typename PixelType>
 class Image{
 public:
     //Number of channels of the image
-    byte channels;
+    int channels;
 
     //Number of rows and columns of the image
     unsigned int rows;
     unsigned int cols;
+
+    #ifdef CUDA
+        //Number of blocks and threads that can be used for the image
+        unsigned int blocks;
+        unsigned int threads;
+    #endif
 
     //Total number of pixels
     unsigned int total;
@@ -25,7 +31,7 @@ public:
     PixelType *pixels;
 
     //Constructor, will reserve the memory needed for the program to run
-    Image( cv::Mat );
+    Image( cv::Mat& );
 
     //Destructor, release memory when out of scope or when deleted
     ~Image();
@@ -33,7 +39,9 @@ public:
     cv::Mat cv_mat();
 
     //This operator will convert a CV Mat image into a Image class handled by CUDA(If its the case)
-    template<typename Px>
-    friend void operator >> ( cv::Mat &input, Image<Px> &img );
+    void set( cv::Mat &input );
+
+    void create_background( cv::VideoCapture & );
+    void update_background( Image & );
 
 };

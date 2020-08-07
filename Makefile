@@ -7,7 +7,7 @@ SOURCE_DIR=./src
 OBJDIR=./build
 OBJECTS=Image.o main.o
 BINDIR=./bin
-ARCH=-DCUDA=1
+ARCH=-DCUDA=1 -DDEBUG=1
 #######################################################################
 #					DO NOT TOUCH BEYOND THIS LINE					  #
 #######################################################################
@@ -17,10 +17,9 @@ directories:
 	@mkdir -p $(OBJDIR) $(BINDIR)
 
 %.o: $(SOURCE_DIR)/%.cxx
-	$(CC) $(ARCH) $(CFLAGS) $(INCLUDE_DIRS) $(LIBS) -c $< -o $(OBJDIR)/$@
+	$(CC) $(ARCH) -x cu $(CFLAGS) $(INCLUDE_DIRS) $(LIBS) -c $< -o $(OBJDIR)/$@
 
 cuderberos: directories $(OBJECTS)
-	$(CC) $(ARCH) $(OBJDIR)/* $(CFLAGS) $(INCLUDE_DIRS) $(LIBS) -o $(BINDIR)/$(TARGET)
-
+	$(CC) $(ARCH) -o $(BINDIR)/$(TARGET) $(OBJDIR)/* $(CFLAGS) $(INCLUDE_DIRS) $(LIBS) 
 clean:
 	rm -rf $(OBJDIR) $(BINDIR) 2> /dev/null

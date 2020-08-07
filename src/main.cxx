@@ -1,5 +1,4 @@
-//#include <Image.h>
-#include "../include/Image.h"
+#include <Image.h>
 
 std::string gstreamer_pipeline (int capture_width, int capture_height, int display_width, int display_height, int framerate, int flip_method) {
     return "nvarguscamerasrc ! video/x-raw(memory:NVMM), width=(int)" + std::to_string(capture_width) + ", height=(int)" +
@@ -34,7 +33,9 @@ int main(){
     cv::Mat img;
     cap.read(img);
 
-    Image<PixelRGB> imagenPrueba();
+    Image<PixelRGB> imagenPrueba(img);
+    Image<PixelRGB> fondo(img);
+    fondo.create_background(cap);
 
     std::cout << "Hit ESC to exit" << "\n" ;
     while(true)
@@ -43,9 +44,9 @@ int main(){
             std::cout<<"Capture read error"<<std::endl;
             break;
 	    }
-        //img >> imagenPrueba;
-
-        //cv::imshow("CSI Camera", imagenPrueba.cv_mat());
+        imagenPrueba.set(img);
+        fondo.update_background(imagenPrueba);
+        cv::imshow("CSI Camera", fondo.cv_mat());
         int keycode = cv::waitKey(30) & 0xff ; 
         if (keycode == 27) break ;
     }
